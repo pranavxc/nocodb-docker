@@ -8,6 +8,7 @@ then
   unzip develop.zip -d nocodb && \
   # install 0x \
   npm install -g 0x && \
+  npm install -g nest && \
   cd ./nocodb/nocodb-develop && \
   # build nocodb-sdk \
   cd ./packages/nocodb-sdk && \
@@ -18,12 +19,16 @@ then
   npm install && \
   npm run generate && \
   # copy gui build to nocodb \
-  rsync -rvzh ./dist/ ../nocodb/src/run/nc-gui/ && \
   # install nocodb dependencies \
   cd ../nocodb && \
-  npm install
-else
-  cd ./nocodb/nocodb-develop/packages/nocodb
+  rm -r tests && \
+  npm install && \
+  nest build && \
+  rsync -rvzh ../ncgui/dist/ ./dist/run/nc-gui/
+  cd ../../../../
+#else
+#  cd ./nocodb/nocodb-develop/packages/nocodb
 fi
 
-0x -- node -r ts-node/register -r tsconfig-paths/register src/run/local.ts
+cd src
+node index.js

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="padding: 20px 10px">
+<button class="start">Start</button>
+<button class="stop">Stop</button>
+</div>
+<div class="list" style="padding: 10px">
+
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+<script>
+    (function ($) {
+        $('button.start').click(function () {
+            $.ajax({
+                url: '/start',
+                type: 'POST',
+                success: function (data) {
+                    alert(data);
+                }
+            });
+        });
+        $('button.stop').click(function () {
+            $.ajax({
+                url: '/stop',
+                type: 'POST',
+                success: function (data) {
+                    alert(data);
+                }
+            });
+        });
+
+        $.get('/flamegraphs', function (data) {
+            data.forEach(function (item) {
+                $('.list').append('<a href="/' + item + '">' + item + '</a>' +
+                  '&nbsp;&nbsp;&nbsp;' +
+                  '<a href="/' + item + '/download">Download</a>' +
+                  '<br>');
+            })
+        })
+    })(jQuery)
+</script>
+</body>
+
+</html>

@@ -1,3 +1,6 @@
 /develop.zip
 /nocodb
 /.idea
+/src/node_modules/
+/results/
+/src/noco.db
