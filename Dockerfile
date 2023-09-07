@@ -11,13 +11,27 @@ RUN apk --update --no-cache add \
     tar \
     dumb-init \
     wget \
-    rsync
+    rsync \
+    npm
 
-COPY ./run.sh /usr/src/appEntry/start.sh
+COPY ./run.sh /usr/src/app/
+COPY ./src/ /usr/src/app/src/
 
+#  npm install -g nest && \
+
+RUN cd /usr/src/app/src && \
+  npm install && \
+  npm install -g 0x && \
+  npm install -g npm-run-all && \
+  npm install -g tsc-alias && \
+  npm install -g @nestjs/cli@9.0.0 && \
+  npm install -g typescript@4.7.4
+
+RUN mkdir -p /usr/app/data/
+RUN mkdir -p /usr/src/app/results/
 
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # Start Nocodb
-CMD ["/usr/src/appEntry/start.sh"]
+CMD ["sh", "/usr/src/app/run.sh"]
