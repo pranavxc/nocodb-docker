@@ -14,6 +14,10 @@ RUN apk --update --no-cache add \
     rsync \
     npm
 
+
+RUN mkdir -p /usr/app/data/
+RUN mkdir -p /usr/src/app/results/
+
 COPY ./run.sh /usr/src/app/
 COPY ./src/ /usr/src/app/src/
 
@@ -27,8 +31,6 @@ RUN cd /usr/src/app/src && \
   npm install -g @nestjs/cli@9.0.0 && \
   npm install -g typescript@4.7.4
 
-RUN mkdir -p /usr/app/data/
-RUN mkdir -p /usr/src/app/results/
 
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]

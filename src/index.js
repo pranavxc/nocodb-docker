@@ -34,15 +34,23 @@ const resultPath = path.join(__dirname, '../results')
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 app.post('/start', (req, res) => {
-  startApp()
-  res.send('Done')
+  try {
+    startApp()
+  } catch (e) {
+    return res.status(400).send(e.message)
+  }
+  res.send('The application will initiate shortly, please wait couple of minutes and open http://localhost:/')
 })
 app.post('/stop', (req, res) => {
-  stopApp()
-  res.send('Done')
+  try {
+    stopApp()
+  } catch (e) {
+    return res.status(400).send(e.message)
+  }
+  res.send('App will stop shortly')
 })
 app.get('/flamegraphs', (req, res) => {
-  const result = fs.readdirSync(resultPath, { withFileTypes: true })
+  const result = fs.readdirSync(resultPath, {withFileTypes: true})
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
 
@@ -53,14 +61,14 @@ app.get('/flamegraphs', (req, res) => {
 app.use('/', express.static(resultPath, {index: 'flamegraph.html'}));
 app.use('/:name/download', (req, res) => {
 
-  let folderPath = path.join(resultPath , req.params.name);
+  let folderPath = path.join(resultPath, req.params.name);
 
-  if(!fs.existsSync(folderPath)) {
+  if (!fs.existsSync(folderPath)) {
     res.status(404).send('Not found')
     return
   }
 
-  const  to_zip = fs.readdirSync(folderPath);
+  const to_zip = fs.readdirSync(folderPath);
   const zp = new admz();
 
   for (let k = 0; k < to_zip.length; k++) {
@@ -81,15 +89,21 @@ app.use('/:name/download', (req, res) => {
 })
 
 app.listen(4000, () => {
-  console.log('Example app listening on port 4000!')
+  console.log('App listening on port 4000!')
 })
+
 function startApp() {
-  if(!childProc) {
+  if (!childProc) {
     childProc = shell.exec(`0x -D '${resultPath}/{timestamp}.{pid}.0x' ${scriptPath}`, {async: true})
+  } else {
+    throw new Error('App is already running')
   }
 }
 
 function stopApp() {
+  if (!childProc) {
+    throw new Error('App is not running')
+  }
   childProc.kill()
   // childProc.stdin.write("\x03")
 
